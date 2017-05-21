@@ -5,8 +5,8 @@
   (:nicknames :unistd)
   (:use
    :cffi
-   :cffi-errno
-   :common-lisp)
+   :common-lisp
+   :errno)
   (:shadow
    #:close)
   (:export
