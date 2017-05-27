@@ -12,6 +12,10 @@
    #:read
    #:write)
   (:export
+   #:c-access
+   #:access
+   #:c-lseek
+   #:lseek
    #:c-read
    #:read
    #:read-non-blocking

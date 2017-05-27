@@ -1,6 +1,27 @@
 
 (in-package :cffi-unistd)
 
+(defcfun ("access" c-access) :int
+  (name :string)
+  (type :int))
+
+(defun access (name type)
+  (let ((r (c-access name type)))
+    (when (< r 0)
+      (error-errno "access"))
+    r))
+
+(defcfun ("lseek" c-lseek) off-t
+  (fd :int)
+  (offset off-t)
+  (whence :int))
+
+(defun lseek (fd offset whence)
+  (let ((r (c-lseek fd offset whence)))
+    (when (< r 0)
+      (error-errno "lseek"))
+    r))
+
 (defcfun ("close" c-close) :int
   (fd :int))
 
@@ -63,9 +84,11 @@ or number of bytes written otherwise."
 
 (defun pipe ()
   (with-foreign-object (fd :int 2)
-    (c-pipe fd)
-    (values (mem-aref fd :int 0)
-	    (mem-aref fd :int 1))))
+    (let ((r (c-pipe fd)))
+      (when (< r 0)
+	(error-errno "pipe"))
+      (values (mem-aref fd :int 0)
+	      (mem-aref fd :int 1)))))
 
 (defmacro with-pipe ((in-var out-var) &body body)
   `(multiple-value-bind (,in-var ,out-var) (pipe)
