@@ -5,8 +5,10 @@
   (fd :int))
 
 (defun close (fd)
-  (when (< (c-close fd) 0)
-    (error-errno "close")))
+  (let ((r (c-close fd)))
+    (when (< r 0)
+      (error-errno "close"))
+    r))
 
 (defcfun ("read" c-read) ssize-t
   (fd :int)
