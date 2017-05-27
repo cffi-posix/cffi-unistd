@@ -3,8 +3,12 @@
 
 (include "unistd.h")
 
-(ctype size-t "size_t")
+(constant (+stdin-fileno+ "STDIN_FILENO"))
+(constant (+stdout-fileno+ "STDOUT_FILENO"))
+(constant (+stderr-fileno+ "STDERR_FILENO"))
+
 (ctype ssize-t "ssize_t")
+(ctype size-t "size_t")
 (ctype gid-t "gid_t")
 (ctype uid-t "uid_t")
 (ctype off-t "off_t")
