@@ -8,12 +8,18 @@
    :common-lisp
    :errno)
   (:shadow
-   #:close)
+   #:close
+   #:read
+   #:write)
   (:export
    #:c-read
+   #:read
+   #:read-non-blocking
    #:c-close
    #:close
    #:c-write
+   #:write
+   #:write-non-blocking
    #:c-pipe
    #:pipe
    #:with-pipe
