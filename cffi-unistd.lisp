@@ -63,12 +63,12 @@ Returns number of bytes read."
 
 (defun read-non-blocking (fd buf count)
   "Reads at most COUNT bytes from FD into BUF.
-Returns NIL if read would block,
+Returns :NON-BLOCKING if read would block,
 or number of bytes read otherwise."
   (let ((r (c-read fd buf count)))
     (if (< r 0)
 	(if (or (= +eagain+ errno) (= +ewouldblock+ errno))
-	    nil
+	    :non-blocking
 	    (error-errno "read"))
 	r)))
 
@@ -87,12 +87,12 @@ Returns number of bytes written."
 
 (defun write-non-blocking (fd buf count)
   "Writes at most COUNT bytes from BUF into FD.
-Returns NIL if write would block,
+Returns :NON-BLOCKING if write would block,
 or number of bytes written otherwise."
   (let ((r (c-write fd buf count)))
     (if (< r 0)
 	(if (or (= +eagain+ errno) (= +ewouldblock+ errno))
-	    nil
+	    :non-blocking
 	    (error-errno "write"))
 	r)))
 
