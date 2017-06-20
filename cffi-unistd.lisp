@@ -67,10 +67,10 @@ Returns :NON-BLOCKING if read would block,
 or number of bytes read otherwise."
   (let ((r (c-read fd buf count)))
     (if (< r 0)
-	(if (or (= +eagain+ errno) (= +ewouldblock+ errno))
-	    :non-blocking
-	    (error-errno "read"))
-	r)))
+        (if (or (= +eagain+ errno) (= +ewouldblock+ errno))
+            :non-blocking
+            (error-errno "read"))
+        r)))
 
 (defcfun ("write" c-write) ssize-t
   (fd :int)
@@ -91,10 +91,10 @@ Returns :NON-BLOCKING if write would block,
 or number of bytes written otherwise."
   (let ((r (c-write fd buf count)))
     (if (< r 0)
-	(if (or (= +eagain+ errno) (= +ewouldblock+ errno))
-	    :non-blocking
-	    (error-errno "write"))
-	r)))
+        (if (or (= +eagain+ errno) (= +ewouldblock+ errno))
+            :non-blocking
+            (error-errno "write"))
+        r)))
 
 (defcfun ("pipe" c-pipe) :int
   (pipefd (:pointer :int)))
@@ -103,9 +103,9 @@ or number of bytes written otherwise."
   (with-foreign-object (fd :int 2)
     (let ((r (c-pipe fd)))
       (when (< r 0)
-	(error-errno "pipe"))
+        (error-errno "pipe"))
       (values (mem-aref fd :int 0)
-	      (mem-aref fd :int 1)))))
+              (mem-aref fd :int 1)))))
 
 (defmacro with-pipe ((in-var out-var) &body body)
   `(multiple-value-bind (,in-var ,out-var) (pipe)
