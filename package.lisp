@@ -44,4 +44,4 @@
    #:c-pipe
    #:pipe
    #:with-pipe
-   ))
+   #:dup))

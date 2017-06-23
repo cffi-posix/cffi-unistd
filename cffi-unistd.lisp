@@ -112,3 +112,12 @@ or number of bytes written otherwise."
      (unwind-protect (progn ,@body)
        (close ,out-var)
        (close ,in-var))))
+
+(defcfun ("dup" c-dup) :int
+  (oldfd :int))
+
+(defun dup (oldfd)
+  (let ((r (c-dup oldfd)))
+    (when (< r 0)
+      (error-errno "dup"))
+    r))
