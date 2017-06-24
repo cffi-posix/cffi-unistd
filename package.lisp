@@ -44,4 +44,22 @@
    #:c-pipe
    #:pipe
    #:with-pipe
-   #:dup))
+   #:dup
+   #:fd-set
+   #:fds-bits
+   #:fd-mask
+   #:+fd-setsize+
+   #:+nfdbits+
+   #:fd-elt
+   #:fd-clr
+   #:fd-isset
+   #:fd-set
+   #:fd-zero
+   #:timeval
+   #:tv-sec
+   #:tv-usec
+   #:select
+   #:list-to-fd-set
+   #:seconds-to-timeval
+   #:fd-set-filter
+   #:with-selected))

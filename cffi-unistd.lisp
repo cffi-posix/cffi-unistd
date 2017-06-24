@@ -121,3 +121,108 @@ or number of bytes written otherwise."
     (when (< r 0)
       (error-errno "dup"))
     r))
+
+;;  Select
+
+(defcstruct fd-set
+  (fds-bits fd-mask :count #.(/ +fd-setsize+ +nfdbits+)))
+
+(defun fd-elt (fd)
+  (/ fd +nfdbits+))
+
+(defun fd-mask (fd)
+  (ash 1 (mod fd +nfdbits+)))
+
+(defmacro fds-bits (fd fd-set)
+  `(mem-aref (foreign-slot-value ,fd-set '(:struct fd-set)
+                                 'fds-bits)
+             'fd-mask (fd-elt ,fd)))
+
+(defun fd-clr (fd fd-set)
+  (setf (fds-bits fd fd-set)
+        (logand (fds-bits fd fd-set) (lognot (fd-mask fd)))))
+
+(defun fd-isset (fd fd-set)
+  (not (zerop (logand (fds-bits fd fd-set) (fd-mask fd)))))
+
+(defun fd-set (fd fd-set)
+  (setf (fds-bits fd fd-set)
+        (logior (fds-bits fd fd-set) (fd-mask fd))))
+
+(defun fd-zero (fd-set)
+  (dotimes (i (/ (foreign-type-size 'fd-set) (foreign-type-size 'fd-mask)))
+    (setf (mem-aref (foreign-slot-value fd-set '(:struct fd-set) 'fds-bits)
+                    'fd-mask i)
+          0)))
+
+(defcstruct timeval
+  (tv-sec :long)
+  (tv-usec :long))
+
+(defcfun ("select" c-select) :int
+  (nfds :int)
+  (readfds (:pointer (:struct fd-set)))
+  (writefds (:pointer (:struct fd-set)))
+  (exceptfds (:pointer (:struct fd-set)))
+  (timeout (:pointer (:struct timeval))))
+
+(defun select (nfds readfds writefds exceptfds timeout)
+  (let ((r (c-select nfds readfds writefds exceptfds timeout)))
+    (when (< r 0)
+      (error-errno "select"))
+    r))
+
+(defun list-to-fd-set (list fd-set)
+  (fd-zero fd-set)
+  (dolist (fd list)
+    (fd-set fd fd-set)))
+
+(defun seconds-to-timeval (seconds tv)
+  (let ((sec (floor seconds)))
+    (setf (foreign-slot-value tv '(:struct timeval) 'tv-sec)
+          sec
+          (foreign-slot-value tv '(:struct timeval) 'tv-sec)
+          (floor (* (- seconds sec) 1000000)))))
+
+(defun fd-set-filter (list fd-set)
+  (let ((result ()))
+    (dolist (fd list)
+      (when (fd-isset fd fd-set)
+        (push fd result)))
+    result))
+
+(defmacro with-selected ((readfds &optional writefds exceptfds timeout)
+                         (readfds-var writefds-var exceptfds-var)
+                         &body body)
+  (let ((g-readfds (gensym "R-"))
+        (g-writefds (gensym "W-"))
+        (g-exceptfds (gensym "E-"))
+        (nfds (gensym "N-"))
+        (fd-set-read (gensym "FDS-R-"))
+        (fd-set-write (gensym "FDS-W-"))
+        (fd-set-except (gensym "FDS-E-"))
+        (tv (gensym "TV-")))
+    `(let ((,g-readfds ,readfds)
+           (,g-writefds ,writefds)
+           (,g-exceptfds ,exceptfds)
+           (,nfds 0))
+       (cffi:with-foreign-objects ((,fd-set-read (:struct fd-set))
+                                   (,fd-set-write (:struct fd-set))
+                                   (,fd-set-except (:struct fd-set))
+                                   (,tv (:struct timeval)))
+         (list-to-fd-set ,g-readfds ,fd-set-read)
+         (list-to-fd-set ,g-writefds ,fd-set-write)
+         (list-to-fd-set ,g-exceptfds ,fd-set-except)
+         (seconds-to-timeval ,timeout ,tv)
+         (dolist (fd ,g-readfds)
+           (when (< ,nfds fd) (setq ,nfds fd)))
+         (dolist (fd ,g-writefds)
+           (when (< ,nfds fd) (setq ,nfds fd)))
+         (dolist (fd ,g-exceptfds)
+           (when (< ,nfds fd) (setq ,nfds fd)))
+         (incf ,nfds)
+         (select ,nfds ,fd-set-read ,fd-set-write ,fd-set-except ,tv)
+         (let ((,readfds-var (fd-set-filter ,g-readfds ,fd-set-read))
+               (,writefds-var (fd-set-filter ,g-writefds ,fd-set-write))
+               (,exceptfds-var (fd-set-filter ,g-exceptfds ,fd-set-except)))
+           ,@body)))))

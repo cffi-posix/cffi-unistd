@@ -45,3 +45,7 @@
 (constant (+seek-end+ "SEEK_END"))
 (constant (+seek-data+ "SEEK_DATA"))
 (constant (+seek-hole+ "SEEK_HOLE"))
+
+(ctype fd-mask "fd_mask")
+(constant (+fd-setsize+ "FD_SETSIZE"))
+(constant (+nfdbits+ "NFDBITS"))
