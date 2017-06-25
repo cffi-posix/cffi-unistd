@@ -125,10 +125,10 @@ or number of bytes written otherwise."
 ;;  Select
 
 (defcstruct fd-set
-  (fds-bits fd-mask :count #.(/ +fd-setsize+ +nfdbits+)))
+  (fds-bits fd-mask :count #.(floor (/ +fd-setsize+ +nfdbits+))))
 
 (defun fd-elt (fd)
-  (/ fd +nfdbits+))
+  (floor (/ fd +nfdbits+)))
 
 (defun fd-mask (fd)
   (ash 1 (mod fd +nfdbits+)))
@@ -150,7 +150,8 @@ or number of bytes written otherwise."
         (logior (fds-bits fd fd-set) (fd-mask fd))))
 
 (defun fd-zero (fd-set)
-  (dotimes (i (/ (foreign-type-size 'fd-set) (foreign-type-size 'fd-mask)))
+  (dotimes (i (floor (/ (foreign-type-size '(:struct fd-set))
+                        (foreign-type-size 'fd-mask))))
     (setf (mem-aref (foreign-slot-value fd-set '(:struct fd-set) 'fds-bits)
                     'fd-mask i)
           0)))
@@ -181,7 +182,7 @@ or number of bytes written otherwise."
   (let ((sec (floor seconds)))
     (setf (foreign-slot-value tv '(:struct timeval) 'tv-sec)
           sec
-          (foreign-slot-value tv '(:struct timeval) 'tv-sec)
+          (foreign-slot-value tv '(:struct timeval) 'tv-usec)
           (floor (* (- seconds sec) 1000000)))))
 
 (defun fd-set-filter (list fd-set)
@@ -206,14 +207,15 @@ or number of bytes written otherwise."
            (,g-writefds ,writefds)
            (,g-exceptfds ,exceptfds)
            (,nfds 0))
-       (cffi:with-foreign-objects ((,fd-set-read (:struct fd-set))
-                                   (,fd-set-write (:struct fd-set))
-                                   (,fd-set-except (:struct fd-set))
-                                   (,tv (:struct timeval)))
+       (cffi:with-foreign-objects ((,fd-set-read '(:struct fd-set))
+                                   (,fd-set-write '(:struct fd-set))
+                                   (,fd-set-except '(:struct fd-set))
+                                   (,tv '(:struct timeval)))
          (list-to-fd-set ,g-readfds ,fd-set-read)
          (list-to-fd-set ,g-writefds ,fd-set-write)
          (list-to-fd-set ,g-exceptfds ,fd-set-except)
-         (seconds-to-timeval ,timeout ,tv)
+         (when ,timeout
+           (seconds-to-timeval ,timeout ,tv))
          (dolist (fd ,g-readfds)
            (when (< ,nfds fd) (setq ,nfds fd)))
          (dolist (fd ,g-writefds)
@@ -221,8 +223,10 @@ or number of bytes written otherwise."
          (dolist (fd ,g-exceptfds)
            (when (< ,nfds fd) (setq ,nfds fd)))
          (incf ,nfds)
-         (select ,nfds ,fd-set-read ,fd-set-write ,fd-set-except ,tv)
+         (select ,nfds ,fd-set-read ,fd-set-write ,fd-set-except
+                 (if ,timeout ,tv (null-pointer)))
          (let ((,readfds-var (fd-set-filter ,g-readfds ,fd-set-read))
                (,writefds-var (fd-set-filter ,g-writefds ,fd-set-write))
                (,exceptfds-var (fd-set-filter ,g-exceptfds ,fd-set-except)))
+           (declare (ignorable ,readfds-var ,writefds-var ,exceptfds-var))
            ,@body)))))
