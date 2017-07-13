@@ -29,7 +29,6 @@
 (ctype gid-t "gid_t")
 (ctype uid-t "uid_t")
 (ctype off-t "off_t")
-(ctype off64-t "off64_t")
 (ctype useconds-t "useconds_t")
 (ctype pid-t "pid_t")
 (ctype intptr-t "intptr_t")
