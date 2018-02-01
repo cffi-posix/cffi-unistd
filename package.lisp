@@ -29,6 +29,9 @@
    #:read
    #:write)
   (:export
+   #:+stdin-fileno+
+   #:+stdout-fileno+
+   #:+stderr-fileno+
    #:c-access
    #:access
    #:c-lseek
