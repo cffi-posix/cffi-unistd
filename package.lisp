@@ -27,42 +27,100 @@
   (:shadow
    #:close
    #:read
+   #:sleep
    #:write)
   (:export
-   #:+stdin-fileno+
-   #:+stdout-fileno+
-   #:+stderr-fileno+
-   #:c-access
-   #:access
-   #:c-lseek
-   #:lseek
-   #:c-read
-   #:read
-   #:read-non-blocking
-   #:c-close
-   #:close
-   #:c-write
-   #:write
-   #:write-non-blocking
-   #:c-pipe
-   #:pipe
-   #:with-pipe
-   #:dup
-   #:fd-set
-   #:fds-bits
-   #:fd-mask
+   #:+f-ok+
    #:+fd-setsize+
    #:+nfdbits+
-   #:fd-elt
+   #:+r-ok+
+   #:+seek-set+
+   #:+seek-cur+
+   #:+seek-end+
+   #:+seek-data+
+   #:+seek-hole+
+   #:+stderr-fileno+
+   #:+stdin-fileno+
+   #:+stdout-fileno+
+   #:+w-ok+
+   #:+x-ok+
+   #:access
+   #:alarm
+   #:c-access
+   #:c-alarm
+   #:c-chdir
+   #:c-chown
+   #:c-close
+   #:c-dup
+   #:c-dup2
+   #:c-dup3
+   #:c-environ
+   #:c-euidaccess
+   #:c-fchdir
+   #:c-fchown
+   #:c-fchownat
+   #:c-getcwd
+   #:c-lchown
+   #:c-lseek
+   #:c-pause
+   #:c-pipe
+   #:c-pipe2
+   #:c-pread
+   #:c-pwrite
+   #:c-read
+   #:c-select
+   #:c-sleep
+   #:c-ualarm
+   #:c-usleep
+   #:c-write
+   #:chdir
+   #:chown
+   #:close
+   #:dup
+   #:dup2
+   #:dup3
+   #:environ
+   #:euidaccess
+   #:fchdir
+   #:fchown
+   #:fchownat
    #:fd-clr
+   #:fd-elt
    #:fd-isset
+   #:fd-mask
    #:fd-set
+   #:fd-set-filter
    #:fd-zero
+   #:fds-bits
+   #:getcwd
+   #:gid-t
+   #:intptr-t
+   #:lchown
+   #:list-to-fd-set
+   #:lseek
+   #:off-t
+   #:pause
+   #:pid-t
+   #:pipe
+   #:pipe2
+   #:pread
+   #:pwrite
+   #:read
+   #:read-non-blocking
+   #:seconds-to-timeval
+   #:select
+   #:size-t
+   #:sleep
+   #:socklen-t
+   #:ssize-t
    #:timeval
    #:tv-sec
    #:tv-usec
-   #:select
-   #:list-to-fd-set
-   #:seconds-to-timeval
-   #:fd-set-filter
-   #:with-selected))
+   #:ualarm
+   #:uid-t
+   #:useconds-t
+   #:usleep
+   #:with-pipe
+   #:with-selected
+   #:write
+   #:write-non-blocking))
