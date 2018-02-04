@@ -76,6 +76,7 @@
    #:chdir
    #:chown
    #:close
+   #:do-environ
    #:dup
    #:dup2
    #:dup3
@@ -93,6 +94,7 @@
    #:fd-zero
    #:fds-bits
    #:getcwd
+   #:getenv
    #:gid-t
    #:intptr-t
    #:lchown
