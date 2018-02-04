@@ -319,18 +319,34 @@ without changing the file pointer. Returns number of bytes written."
 (defcvar ("environ" c-environ) (:pointer :string)
   "NULL-terminated array of \"NAME=VALUE\" environment variables.")
 
+(defmacro do-environ ((var) &body body)
+  (let ((env (gensym "ENV-")))
+    `(let ((,env c-environ))
+       (loop
+          (let ((,var (mem-ref ,env :string)))
+            (unless ,var
+              (return))
+            ,@body)
+          (setf ,env (mem-aptr ,env '(:pointer :string) 1))))))
+
 (defun environ ()
-  (let ((env c-environ)
-        (list ()))
-    (loop
-       (when (null-pointer-p env)
-         (return))
-       (push (mem-aref env '(:pointer :string)) list)
-       (setf env (mem-aptr env '(:pointer :string) 1)))
+  (let ((list ()))
+    (do-environ (env)
+       (push env list))
     list))
 
 #+test
 (environ)
+
+(defun getenv (name)
+  (let* ((name= (concatenate 'string name "="))
+         (len (length name=)))
+    (do-environ (env)
+      (when (string= name= env :end2 len)
+        (return (subseq env len))))))
+
+#+test
+(getenv "HOME")
 
 ;;  Select
 
