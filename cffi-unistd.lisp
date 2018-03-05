@@ -348,6 +348,256 @@ without changing the file pointer. Returns number of bytes written."
 #+test
 (getenv "HOME")
 
+(defcfun ("execve" c-execve) :int
+  (path :string)
+  (argv (:pointer :string))
+  (envp (:pointer :string)))
+
+(defun execve (path argv envp)
+  (let ((r (c-execve path argv envp)))
+    (if (= -1 r)
+        (error-errno path)
+        (error "execve ~S" path))))
+
+(defcfun ("execv" c-execv) :int
+  (path :string)
+  (argv (:pointer :string)))
+
+(defun execv (path argv)
+  (let ((r (c-execv path argv)))
+    (if (= -1 r)
+        (error-errno path)
+        (error "execv ~S" path))))
+
+(defcfun ("execvp" c-execvp) :int
+  (path :string)
+  (argv (:pointer :string)))
+
+(defun execvp (path argv)
+  (let ((r (c-execvp path argv)))
+    (if (= -1 r)
+        (error-errno path)
+        (error "execv ~S" path))))
+
+(defcfun ("execvpe" c-execvpe) :int
+  (path :string)
+  (argv (:pointer :string))
+  (envp (:pointer :string)))
+
+(defun execvpe (path argv envp)
+  (let ((r (c-execvpe path argv envp)))
+    (if (= -1 r)
+        (error-errno path)
+        (error "execvpe ~S" path))))
+
+(defcfun ("nice" c-nice) :int
+  (inc :int))
+
+(defun nice (inc)
+  (setf errno 0)
+  (let ((r (c-nice inc)))
+    (unless (= 0 errno)
+      (error-errno "nice"))
+    r))
+
+(defcfun ("_exit" c-_exit) :void
+  (status :int))
+
+(defun _exit (status)
+  (c-_exit status))
+
+(defcfun ("pathconf" c-pathconf) :long
+  (path :string)
+  (name :int))
+
+(defun pathconf (path name)
+  (c-pathconf path name))
+
+(defcfun ("sysconf" c-sysconf) :long
+  (name :int))
+
+(defun sysconf (name)
+  (c-sysconf name))
+
+(defcfun ("getpid" c-getpid) pid-t)
+
+(defun getpid ()
+  (c-getpid))
+
+(defcfun ("getppid" c-getppid) pid-t)
+
+(defun getppid ()
+  (c-getppid))
+
+(defcfun ("getpgrp" c-getpgrp) pid-t)
+
+(defun getpgrp ()
+  (c-getpgrp))
+
+(defcfun ("getpgid" c-getpgid) pid-t)
+
+(defun getpgid ()
+  (c-getpgid))
+
+(defcfun ("setpgid" c-setpgid) pid-t)
+
+(defun setpgid ()
+  (c-setpgid))
+
+(defcfun ("setpgrp" c-setpgrp) :int)
+
+(defun setpgrp ()
+  (c-setpgrp))
+
+(defcfun ("setsid" c-setsid) pid-t)
+
+(defun setsid ()
+  (c-setsid))
+
+(defcfun ("getsid" c-getsid) pid-t
+  (pid pid-t))
+
+(defun getsid (pid)
+  (c-getsid pid))
+
+(defcfun ("getuid" c-getuid) pid-t)
+
+(defun getuid ()
+  (c-getuid))
+
+(defcfun ("geteuid" c-geteuid) pid-t)
+
+(defun geteuid ()
+  (c-geteuid))
+
+(defcfun ("getgid" c-getgid) pid-t)
+
+(defun getgid ()
+  (c-getgid))
+
+(defcfun ("getegid" c-getegid) pid-t)
+
+(defun getegid ()
+  (c-getegid))
+
+(defcfun ("getgroups" c-getgroups) :int
+  (size :int)
+  (list gid-t))
+
+(defcfun ("setuid" c-setuid) :int
+  (uid uid-t))
+
+(defun setuid (uid)
+  (c-setuid uid))
+
+(defcfun ("seteuid" c-seteuid) :int
+  (uid uid-t))
+
+(defun seteuid (uid)
+  (c-seteuid uid))
+
+(defcfun ("setgid" c-setgid) :int
+  (gid gid-t))
+
+(defun setgid (gid)
+  (c-setgid gid))
+
+(defcfun ("setegid" c-setegid) :int
+  (gid gid-t))
+
+(defun setegid (gid)
+  (c-setegid gid))
+
+(defcfun ("fork" c-fork) pid-t)
+
+(defun fork ()
+  (let ((r (c-fork)))
+    (when (= -1 r)
+      (error-errno "fork"))
+    r))
+
+(defcfun ("vfork" c-vfork) pid-t)
+
+(defun vfork ()
+  (let ((r (c-vfork)))
+    (when (= -1 r)
+      (error-errno "vfork"))
+    r))
+
+(defcfun ("ttyname" c-ttyname) :string
+  (fd :int))
+
+(defun ttyname (fd)
+  (or (c-ttyname fd)
+      (error-errno "ttyname")))
+
+(defcfun ("isatty" c-isatty) :int
+  (fd :int))
+
+(defun isatty (fd)
+  (let ((r (c-isatty fd)))
+    (when (= -1 r)
+      (error-errno "isatty"))
+    r))
+
+(defcfun ("link" c-link) :int
+  (from :string)
+  (to :string))
+
+(defun link (from to)
+  (let ((r (c-link from to)))
+    (when (= -1 r)
+      (error-errno "link"))
+    r))
+
+(defcfun ("symlink" c-symlink) :int
+  (from :string)
+  (to :string))
+
+(defun symlink (from to)
+  (let ((r (c-symlink from to)))
+    (when (= -1 r)
+      (error-errno "symlink"))
+    r))
+
+(defcfun ("readlink" c-readlink) ssize-t
+  (path :string)
+  (buf :string)
+  (len size-t))
+
+(defun readlink (path)
+  (let ((len *path-max*))
+    (with-foreign-object (buf :char len)
+      (let ((r (c-readlink path buf len)))
+        (when (= -1 r)
+          (error-errno path))
+        (let ((octets (make-array `(,r) :element-type '(unsigned-byte 8)
+                                  :initial-element 0)))
+          (dotimes (i r)
+            (setf (aref octets i) (mem-aref buf :unsigned-char i)))
+          (babel:octets-to-string octets :encoding :utf-8))))))
+
+#+nil
+(readlink "/home/dx/common-lisp/RailsOnLisp/rol/assets")
+
+(defcfun ("unlink" c-unlink) :int
+  (name :string))
+
+(defun unlink (name)
+  (let ((r (c-unlink name)))
+    (when (= -1 r)
+      (error-errno "unlink"))
+    r))
+
+(defcfun ("rmdir" c-rmdir) :int
+  (path :string))
+
+(defun rmdir (path)
+  (let ((r (c-rmdir path)))
+    (when (= -1 r)
+      (error-errno "rmdir"))
+    r))
+
 ;;  Select
 
 (defcstruct fd-set

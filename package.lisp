@@ -30,6 +30,7 @@
    #:sleep
    #:write)
   (:export
+   #:_exit
    #:+f-ok+
    #:+fd-setsize+
    #:+nfdbits+
@@ -46,6 +47,7 @@
    #:+x-ok+
    #:access
    #:alarm
+   #:c-_exit
    #:c-access
    #:c-alarm
    #:c-chdir
@@ -56,22 +58,55 @@
    #:c-dup3
    #:c-environ
    #:c-euidaccess
+   #:c-execv
+   #:c-execve
+   #:c-execvp
+   #:c-execvpe
    #:c-fchdir
    #:c-fchown
    #:c-fchownat
+   #:c-fork
    #:c-getcwd
+   #:c-getegid
+   #:c-geteuid
+   #:c-getgid
+   #:c-getgroups
+   #:c-getpgid
+   #:c-getpgrp
+   #:c-getpid
+   #:c-getppid
+   #:c-getsid
+   #:c-getuid
+   #:c-isatty
    #:c-lchown
+   #:c-link
    #:c-lseek
+   #:c-nice
+   #:c-pathconf
    #:c-pause
    #:c-pipe
    #:c-pipe2
    #:c-pread
    #:c-pwrite
    #:c-read
+   #:c-readlink
+   #:c-rmdir
    #:c-select
+   #:c-setegid
+   #:c-seteuid
+   #:c-setgid
+   #:c-setpgid
+   #:c-setpgrp
+   #:c-setsid
+   #:c-setuid
    #:c-sleep
+   #:c-symlink
+   #:c-sysconf
+   #:c-ttyname
    #:c-ualarm
+   #:c-unlink
    #:c-usleep
+   #:c-vfork
    #:c-write
    #:chdir
    #:chown
@@ -82,6 +117,10 @@
    #:dup3
    #:environ
    #:euidaccess
+   #:execv
+   #:execve
+   #:execvp
+   #:execvpe
    #:fchdir
    #:fchown
    #:fchownat
@@ -93,14 +132,28 @@
    #:fd-set-filter
    #:fd-zero
    #:fds-bits
+   #:fork
    #:getcwd
+   #:getegid
+   #:geteuid
    #:getenv
+   #:getgid
+   #:getgroups
+   #:getpgid
+   #:getpid
+   #:getppid
+   #:getsid
+   #:getuid
    #:gid-t
    #:intptr-t
+   #:isatty
    #:lchown
+   #:link
    #:list-to-fd-set
    #:lseek
+   #:nice
    #:off-t
+   #:pathconf
    #:pause
    #:pid-t
    #:pipe
@@ -109,19 +162,33 @@
    #:pwrite
    #:read
    #:read-non-blocking
+   #:readlink
+   #:rmdir
    #:seconds-to-timeval
    #:select
+   #:setegid
+   #:seteuid
+   #:setgid
+   #:setpgid
+   #:setpgrp
+   #:setsid
+   #:setuid
    #:size-t
    #:sleep
    #:socklen-t
    #:ssize-t
+   #:symlink
+   #:sysconf
    #:timeval
+   #:ttyname
    #:tv-sec
    #:tv-usec
    #:ualarm
    #:uid-t
+   #:unlink
    #:useconds-t
    #:usleep
+   #:vfork
    #:with-pipe
    #:with-selected
    #:write
