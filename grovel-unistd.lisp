@@ -18,6 +18,8 @@
 
 (in-package :cffi-unistd)
 
+(include "sys/select.h")
+(include "sys/socket.h")
 (include "unistd.h")
 
 (constant (+stdin-fileno+ "STDIN_FILENO"))
