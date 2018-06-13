@@ -1,0 +1,10 @@
+cffi-unistd
+
+CFFI wrapper for POSIX header unistd.h
+
+Each function is exported twice : once with a C- prefix with C like
+return code semantics; and another time without prefix with Common
+Lisp error signalling.
+
+References :
+http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/unistd.h.html
