@@ -132,6 +132,7 @@
    #:fd-set-filter
    #:fd-zero
    #:fds-bits
+   #:file-descriptor
    #:fork
    #:getcwd
    #:getegid

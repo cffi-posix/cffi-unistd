@@ -18,6 +18,9 @@
 
 (in-package :cffi-unistd)
 
+(deftype file-descriptor ()
+  '(unsigned-byte 31))
+
 (defcfun ("access" c-access) :int
   (name :string)
   (type :int))
